@@ -174,8 +174,8 @@ server <- function( input, output ) {
                         ylab = "Incidencia [/év/100 ezer fő]",
                         xlab = if( input$Subtask!="Nemspecifikus incidencia" ) "Életkor [év]" else "Nem",
                         data = RawData[ ICDCode==dg&Year%in%ev&County%in%megye,
-                                        binomCI( sum( N ), sum( Population ), input$CIconf/100, eval( parse( text = groupvar ) ) ),
-                                        by = byvars ],
+                                        binomCI( sum( N ), sum( Population ), input$CIconf/100,
+                                                 eval( parse( text = groupvar ) ) ), by = byvars ],
                         label.curves = FALSE,
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = alpha( trellis.par.get()$superpose.line$col, 0.5 ),
@@ -218,8 +218,8 @@ server <- function( input, output ) {
           pars <- list( formula = as.formula( PlotFormula ), groups = as.name( "groups" ),
                         ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év",
                         data = RawData[ ICDCode==dg,
-                                        binomCI( sum( N ), sum( Population ), input$CIconf/100, eval( parse( text = groupvar ) ) ),
-                                        by = byvars ],
+                                        binomCI( sum( N ), sum( Population ), input$CIconf/100,
+                                                 eval( parse( text = groupvar ) ) ), by = byvars ],
                         label.curves = TRUE,
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = alpha( trellis.par.get()$superpose.line$col, 0.5 ),
@@ -246,23 +246,30 @@ server <- function( input, output ) {
           ### TODO: megyénkénti bontás (többféleképp)
         } else if( input$Feladat=="Standardizált incidencia alakulása időben"&&!is.null( input$Standard )  ) {
           print( xYplot( Incidence ~ Year, ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év", type = "b",
-                         data = merge( StdPops, RawData[ ICDCode==dg, .( N = sum( N ), Population = sum( Population ) ), .( Age, Sex, Year ) ], by = c( "Age", "Sex" ) )[
-                           , .( Incidence = epitools::ageadjust.direct( N, Population, stdpop = eval( parse( text = input$Standard ) ) )[ "adj.rate" ]*100000 ),
-                           .( Year ) ],
+                         data = merge( StdPops,
+                                       RawData[ ICDCode==dg, .( N = sum( N ), Population = sum( Population ) ),
+                                                .( Age, Sex, Year ) ], by = c( "Age", "Sex" ) )[
+                                                  , .( Incidence = epitools::ageadjust.direct(
+                                                    N, Population, stdpop = eval( parse( text = input$Standard ) ) )[
+                                                      "adj.rate" ]*100000 ), .( Year ) ],
                          method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                          col.fill = alpha( trellis.par.get()$superpose.line$col, 0.5 ),
                          main = paste0( "Standardizált incidencia (", dg, ")" ) ) )
           ### TODO: A standard nevét is kiírni a címben
         } else if( input$Feladat=="Megyénkénti nyers incidenciák"  ) {
-          print( sp::spplot( sp::merge( MapHunNUTS3, RawData[ ICDCode==dg&Year%in%ev, .( Incidence = sum( N )/sum( Population )*100000 ), .( NAME = County ) ] ), "Incidence",
-                             cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ),
-                             main = paste0( "Megyénkénti nyers incidenciák (", dg, ", ", input$Year, " év)" ) ) )
+          print( sp::spplot( sp::merge( MapHunNUTS3, RawData[ ICDCode==dg&Year%in%ev, .(
+            Incidence = sum( N )/sum( Population )*100000 ), .( NAME = County ) ] ), "Incidence",
+            cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ),
+            main = paste0( "Megyénkénti nyers incidenciák (", dg, ", ", input$Year, " év)" ) ) )
         } else if( input$Feladat=="Megyénkénti standardizált incidenciák"&&!is.null( input$Standard ) ) {
-          print( sp::spplot( sp::merge( MapHunNUTS3, merge( StdPops, RawData[ ICDCode==dg&Year%in%ev,
-                                                                              .( N = sum( N ), Population = sum( Population ) ), .( Age, Sex, County ) ],
-                                                            by = c( "Age", "Sex" ) )[
-                                                              , .( Incidence = epitools::ageadjust.direct( N, Population, stdpop = eval( parse( text = input$Standard ) ) )[ "adj.rate" ]*100000 ),
-                                                              .( NAME = County ) ] ), "Incidence",
+          print( sp::spplot( sp::merge( MapHunNUTS3,
+                                        merge( StdPops, RawData[ ICDCode==dg&Year%in%ev,
+                                                                 .( N = sum( N ), Population = sum( Population ) ),
+                                                                 .( Age, Sex, County ) ],
+                                               by = c( "Age", "Sex" ) )[
+                                                 , .( Incidence = epitools::ageadjust.direct(
+                                                   N, Population, stdpop = eval( parse( text = input$Standard ) ) )[
+                                                     "adj.rate" ]*100000 ), .( NAME = County ) ] ), "Incidence",
                              cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ),
                              main = paste0( "Megyénkénti standardizált incidenciák (", dg, ", ", input$Year, " év)" ) ) )
         }
@@ -315,7 +322,8 @@ server <- function( input, output ) {
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
         grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = gpar( fontface = "bold" ), just = "left" )
-        grid::grid.text( "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/", 1, 0.02, gp = gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/", 1, 0.02,
+                         gp = gpar( fontface = "bold" ), just = "right" )
       }
     }
   }
@@ -351,7 +359,8 @@ server <- function( input, output ) {
   output$StratificationUI <- renderUI( if( input$Feladat%in%CIsFeladat )
     selectInput( "Stratification", "Lebontás", c( "Összesítve", "Évente", "Megyénként" ) ) else NULL )
   
-  output$StandardUI <- renderUI( if( input$Feladat%in%c( "Standardizált incidencia alakulása időben", "Megyénkénti standardizált incidenciák" ) )
+  output$StandardUI <- renderUI( if( input$Feladat%in%c( "Standardizált incidencia alakulása időben",
+                                                         "Megyénkénti standardizált incidenciák" ) )
     selectInput( "Standard", "Standard", c( "Segi-Doll (1960)" = "StdSegiDoll1960",
                                             "ESP (2013)" = "StdESP2013",
                                             "WHO (2001)" = "StdWHO2001",
@@ -372,7 +381,8 @@ server <- function( input, output ) {
     selectInput( "Year", "Év", c( "Összes", sort( unique( RawData$Year ) ) ) )
   } )
   
-  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&!input$Stratification=="Megyénként" ) {
+  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&
+                                       !input$Stratification=="Megyénként" ) {
     selectInput( "County", "Megye", c( "Összes", sort( unique( RawData$County ) ) ) )
   } )
   
