@@ -22,11 +22,13 @@ A megbetegedések esetszámai, az, hogy 10 vastagbélrákos eset fordult elő, �
 
 Az ezt megragadó fogalom az *incidencia*: kifejezi, hogy egységnyi idő (tipikusan 1 év) alatt, egységnyi kockázatnak kitett ember (tipikusan 100 ezer fő) körében hány új megbetegedés lép fel. Bármiféle további számításhoz tehát csak az incidencia használatával van értelme.
 
-Ahhoz, hogy incidenciát tudjunk számolni, szükségünk van arra, hogy az adatokat évekre bontsuk (ezt az NRR is megteszi), valamint, hogy adott év adott diagnózisának esetszámához hozzá tudjuk társítani a "kockázatnak kitett populációt". Ez legegyszerűbb esetben az egész népesség, de az információforrás részletgazdagságának fényében lehet finomabbak
+Ahhoz, hogy incidenciát tudjunk számolni, szükségünk van arra, hogy az adatokat évekre bontsuk (ezt az NRR is megteszi), valamint, hogy adott év adott diagnózisának esetszámához hozzá tudjuk társítani a "kockázatnak kitett populációt". Ez legegyszerűbb esetben az egész népesség, de az információforrás részletgazdagságának fényében lehetünk finomabbak. Például az NRR megadja a betegek nemét is, így megtehetjük, hogy az adott évben adott diagnózisból előforduló férfibetegek számát az ország azévi férfilakosságának számára osztjuk rá, és hasonlóan a nőbetegek számát a női lakosok számával osztjuk. (Így két incidenciát kapunk, ezeket szokás nemspecifikus incidenciának nevezni.) Megtehetjük ugyanezt életkor szerint is: hogy a 0-4 év közötti esetszámot a 0-4 év közötti gyerekek számával osztjuk, ez a korspecifikus incidencia. (Természetesen a kettő kombinálható is.) Az NRR adatai még egy lebontást tesznek lehetővé, a megyénkéntit. Mindezekhez persze az kell, hogy tudjuk a megfelelő népességszámokat, természetesen nem csak összességében, hanem - mint az előző példák mutatják - minden egyes rétegben is, tehát ismerjük évenként, nemenként, korcsoportonként és megyénként a lakosságszámokat, szerencsére ezek a korfák elérhetőek a KSH-nál.
+
+Még egy dologra kell figyelni, ha hosszú időtávokat hasonlítunk össze, vagy ha a magyar adatokat más országok adataival akarjuk összevetni.
 
 # A program használata
 
-A program felülete rendkívül intuitív: a tipikus lekérdezéseket a `Feladat` pont tartalmazza, az alapvető működést azt itt kiválasztott opció határozza meg. A választás függvényében a 
+A program felülete rendkívül intuitív: a tipikus lekérdezéseket a `Feladat` pont tartalmazza, az alapvető működést azt itt kiválasztott opció határozza meg.
 
 # Megjegyzések
 
