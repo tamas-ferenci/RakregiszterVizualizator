@@ -25,12 +25,15 @@ tab <- do.call( rbind, lapply( 2001:2015, function( year ) {
 } ) )
 
 names( tab ) <- c( "ICDCode", "ICDName", paste0( "Age", seq( 0, 85, 5 ) ), "Year", "County", "Sex" )
+tab$ICDName <- enc2utf8( tab$ICDName )
+tab$Sex <- enc2utf8( tab$Sex )
 tab$Year <- as.numeric( tab$Year )
 tab$County[ tab$County=="Györ-Moson-Sopron megye" ] <- "Győr-Moson-Sopron megye"
+tab$County <- enc2utf8( tab$County )
 
 write.csv2( tab, "RawDataWide.csv", row.names = FALSE )
 
-saveRDS( unique( paste( tab$ICDCode, tab$ICDName, sep = "-" ) ), file = "ICD.dat" )
+saveRDS( unique( tab[ , 1:2 ] ), file = "ICDs.dat" )
 
 tab <- tab[ , colnames( tab )!="ICDName" ]
 
@@ -56,3 +59,13 @@ tab <- merge( tab, PopPyramid )
 
 write.csv2( tab, gzfile( "RawDataLongWPop.csv.gz" ), row.names = FALSE )
 saveRDS( tab, file = "RawDataLongWPop.dat" )
+
+StdPops <- fread( "StdPops18.csv" )
+StdPops <- merge( StdPops, tab[ , .( StdHUN = sum( Population ) ), by = .( Sex, Age ) ] )
+
+write.csv2( StdPops, "StdPops.csv", row.names = FALSE )
+saveRDS( StdPops, file = "StdPops.dat" )
+
+MapHunNUTS3 <- rgdal::readOGR( "OSM_kozighatarok", "admin6", encoding = "UTF8", use_iconv = TRUE, stringsAsFactors = FALSE )
+MapHunNUTS3$NAME <- enc2utf8( MapHunNUTS3$NAME )
+saveRDS( MapHunNUTS3, file = "MapHunNUTS3.dat" )
