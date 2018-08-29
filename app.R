@@ -321,9 +321,9 @@ server <- function( input, output ) {
                             "yhat", cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ) )
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
-        grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = gpar( fontface = "bold" ), just = "left" )
+        grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
         grid::grid.text( "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/", 1, 0.02,
-                         gp = gpar( fontface = "bold" ), just = "right" )
+                         gp = grid::gpar( fontface = "bold" ), just = "right" )
       }
     }
   }
