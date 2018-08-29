@@ -317,8 +317,8 @@ server <- function( input, output ) {
         } else {
           p1 <- plot( Predict( fit, Age, Sex ), anova = anova( fit ), pval = TRUE )
           p2 <- plot( Predict( fit, Year ), anova = anova( fit ), pval = TRUE )
-          p3 <- sp::spplot( sp::merge( MapHunNUTS3, data.table( Predict( fit, County ) )[ , .( NAME = County, yhat ) ] ), "yhat",
-                            cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ) )
+          p3 <- sp::spplot( sp::merge( MapHunNUTS3, data.table( Predict( fit, County ) )[ , .( NAME = County, yhat ) ] ),
+                            "yhat", cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ) )
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
         grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = gpar( fontface = "bold" ), just = "left" )
@@ -381,7 +381,8 @@ server <- function( input, output ) {
     selectInput( "Year", "Év", c( "Összes", sort( unique( RawData$Year ) ) ) )
   } )
   
-  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&
+  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&
+                                       input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&
                                        !input$Stratification=="Megyénként" ) {
     selectInput( "County", "Megye", c( "Összes", sort( unique( RawData$County ) ) ) )
   } )
