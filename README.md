@@ -22,7 +22,7 @@ A megbetegedések esetszámai, az, hogy 10 vastagbélrákos eset fordult elő, �
 
 Az ezt megragadó fogalom az *incidencia*: kifejezi, hogy egységnyi idő (tipikusan 1 év) alatt, egységnyi kockázatnak kitett ember (tipikusan 100 ezer fő) körében hány új megbetegedés lép fel. Bármiféle további számításhoz tehát csak az incidencia használatával van értelme.
 
-Ahhoz, hogy incidenciát tudjunk számolni, szükségünk van arra, hogy az adatokat évekre bontsuk (ezt az NRR is megteszi), valamint, hogy adott év adott diagnózisának esetszámához hozzá tudjuk társítani
+Ahhoz, hogy incidenciát tudjunk számolni, szükségünk van arra, hogy az adatokat évekre bontsuk (ezt az NRR is megteszi), valamint, hogy adott év adott diagnózisának esetszámához hozzá tudjuk társítani a "kockázatnak kitett populációt". Ez legegyszerűbb esetben az egész népesség, de az információforrás részletgazdagságának fényében lehet finomabbak
 
 # A program használata
 
@@ -40,11 +40,23 @@ A program felülete rendkívül intuitív: a tipikus lekérdezéseket a `Feladat
 * Az NRR-ben fellelhető "Megyén kívüli" jelzésű megyéjű alanyokat a program eldobja. (Így ugyan keletkezik némi veszteség, hiszen például életkori vagy nemi elemzésekhez ezek felhasználhatóak lennének, de ez egyrészt egészen minimumális - 0,1% körüli - másrészt így minden eredmény konzisztens, olyan értelemben, hogy ugyanazon alanyok alapján készült.)
 * A standard populációkat külön fájl tárolja, ezek - a hozzájuk tartozó irodalmi hivatkozásokkal - a következőek:
 
+  + Segi-Doll (1960): Segi, M. (1960) Cancer Mortality for Selected Sites in 24 Countries (1950–57). Department of Public Health, Tohoku University of Medicine, Sendai, Japan. Doll, R., Payne, P., Waterhouse, J.A.H. eds (1966). Cancer Incidence in Five Continents, Vol. I. Union Internationale Contre le Cancer, Geneva.
+  + ESP (2013): Pace, M., Lanzieri, G., Glickman, M. et al (2013). Revision of the European Standard Population: report of Eurostat's task force. Publications Office of the European Union. [Link](https://ec.europa.eu/eurostat/documents/3859598/5926869/KS-RA-13-028-EN.PDF/e713fa79-1add-44e8-b23d-5e8fa09b3f8f).
+  + WHO (2001): Ahmad, O. B., Boschi-Pinto, C., Lopez, A. D., Murray, C. J., Lozano, R., Inoue, M. (2001). Age standardization of rates: a new WHO standard. Geneva: World Health Organization. [Link](http://www.who.int/healthinfo/paper31.pdf).
+  + Magyar (2001-2015): Ezt a program belsőleg számolja, nem más, mint a beolvasott korfa valamennyi évre aggregált adata, természetesen nem és életkor szerint lebontva.
+  
+* A megyei felbontású térképek forrása az OpenStreetMap ([link](https://data2.openstreetmap.hu/hatarok/)).
+* A konfidenciaintervallumok Clopper-Pearson (egzakt) eljárással számolódnak.
+* A modellezés Poisson-regresszió, offszet a megfelelő réteg lakosságszámának logaritmusa, a modell pedig a felhasználó által beállított választásokból összerakott modell (azzal, hogy az életkor és a nem között mindenképp van interakció, de minden más additív).
+
 ## Technikai megjegyzések
 
-* A program `R` statisztikai környezet alatt fut, az adatbázis kezelésére `data.table` könyvtárat használ, a vizualizáció `lattice`-szal történik, a webes felület létrehozása és kezelése pedig `shiny` segítségével valósul meg.
+* A program `R` statisztikai környezet alatt fut, az adatbázis kezelésére `data.table` könyvtárat használ, a webes felület létrehozása és kezelése pedig `shiny` segítségével valósul meg.
+* A vizualizáció a grafikonok esetében `lattice`-szal (illetve részben az azon alapuló `Hmisc`-kel) történik, a térképek esetében az `sp` csomaggal.
 * A program automatikusan scrape-eli le az NNR adatbázisát a `httr` és az `rvest` könyvtárak használatával, évenkénti bontásban, majd az eredményeket [egy fájlba](RawDataWide.csv) fűzi, és végül [long formátumra](RawDataLong.csv.gz) alakítja.
 * A háttérpopuláció létszámait (lényegében tehát a magyar korfát) a KSH Statinfo adatbázisából kéri le a progam, a saját fejlesztésű [KSHStatinfoScraper](https://github.com/tamas-ferenci/KSHStatinfoScraper) csomag használatával (minden évre az évközepi lélekszámot használva). A long formátumú adatokat a melléjük illesztett háttérpopulációs létszámokkal ismét [külön fájlban](RawDataLongWPop.csv.gz) tárolja.
+* A direkt standardizáció elvégzéséhez a program az `epitools` csomagot használja.
+* A flexibilis modellezés az `rms` csomag segítségével történik.
 
 # Verziótörténet
 
