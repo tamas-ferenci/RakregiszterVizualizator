@@ -130,7 +130,7 @@ ui <- fluidPage(
 server <- function( input, output ) {
   plotInput <- function() {
     
-    if( !is.null( input$Year )&!is.null( input$County ) &!is.null( input$Subtask ) ) {
+    if( !is.null( input$Year )&!is.null( input$County )&!is.null( input$Subtask ) ) {
       if( input$Mod=="Vizualizáció" ) {
         
         ev <- if( input$Year=="Összes"|input$Stratification=="Évente" ) unique( RawData$Year ) else input$Year
