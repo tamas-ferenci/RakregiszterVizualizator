@@ -32,7 +32,7 @@ Még egy dologra kell figyelni, ha hosszú időtávokat hasonlítunk össze, vag
 
 Mi lehet e probléma megoldása? Mit tehet mégis a helyes összehasonlítás érdekében?
 
-Az első lehetőség kézenfekvő: ne a nyers incidenciákat nézzük, hanem a korspecifikus incidenciákat. Minden korcsoportot külön-külön összevetve azonnal világos lesz, hogy a szváziföldi helyzet sokkal rosszabb (vélhetően minden korcsoportban). Ez a módszer a problémát tökéletesen megoldja, más gond van vele: az, hogy macerás. Nem két számot kell összevetnünk, hanem 18-at (ha 5 éves korcsoportokat használunk, mint az NRR). A helyzet tovább romlik, ha netán az eltérő nemi összetétel miatt is aggódunk, hiszen ekkor már 36 rétegünk lesz.
+Az első lehetőség kézenfekvő: ne a nyers incidenciákat nézzük, hanem a korspecifikus incidenciákat. Minden korcsoportot külön-külön összevetve azonnal világos lesz, hogy a szváziföldi helyzet sokkal rosszabb (vélhetően minden korcsoportban). Ez a módszer a problémát tökéletesen megoldja, más gond van vele: az, hogy kényelmetlen. Nem két számot kell összevetnünk, hanem 18-at (ha 5 éves korcsoportokat használunk, mint az NRR). A helyzet tovább romlik, ha netán az eltérő nemi összetétel miatt is aggódunk, hiszen ekkor már 36 rétegünk lesz.
 
 Éppen ezért alakult ki, több mint 150 évvel ezelőtt, egy másik megoldás, melyet *direkt standardizálásnak* szokás nevezni. Ennek lényege, hogy elvégezzük a rétegekre lebontást, tehát kiszámoljuk a korspecifikus incidenciákat, de utána nem a rétegekhez tartozó lakosságszámokkal súlyozva rakjuk őket újra egybe (így kapnánk a nyers incidenciát), hanem a tényleges korfától függetlenül mindig ugyanazt a - standard - korfát használjuk, így szabadulva meg az eltérő korfák problémájától. Az így kapott incidencia természetesen már nem szokásos incidencia, hiszen nem összetartozó korfát és korspecifikus incidenciákat használtunk, de összehasonlításra alkalmas; ezt szokás *standardizált incidenciának* nevezni.
 
@@ -48,6 +48,12 @@ A program felülete rendkívül intuitív: a tipikus lekérdezéseket a `Feladat
 * Megyénkénti nyers incidenciák: színezett térképen ábrázolhatóak a megyénkénti nyers incidenciák adott diagnózisra, az összes évre vagy egy adott évre.
 * Megyénkénti standardizált incidenciák: színezett térképen ábrázolhatóak a megyénkénti standardizált incidenciák adott diagnózisra, az összes évre vagy egy adott évre. A használt standard populáció kiválasztható.
 
+A kevésbé alapvető beállítási lehetőségek alapértelmezetten rejtve vannak, a `Haladó beállítások megjelenítése` opciót bepipálva jeleníthetőek meg. Ezek a következők:
+* A kapott eredmények - a térképes ábrázolásokon kívül - elláthatóak konfidenciaintervallummal. (Ezt bekapcsolva megadható a megbízhatósági szint és a stílus: sávokkal vagy besatírozott területtel jelenjen meg a konfidenciaintervallum.)
+* A függőleges tengely skálázása - a térképeken kívül - logaritmikussá tehető.
+* A függőleges tengely (nem térképeknél) illetve a színtengely (térképeknél) minimuma és maximuma kézzel is beállítható. (Ha nincs ez az opció bepipálva, akkor a program automatikusan határozza meg ezeket az értékeket, optimálisan megválasztva őket az adatok alapján. Ezen lehetőség használata például akkor lehet célszerű, ha több ábrán fontos, hogy ugyanaz legyen a tengely skálázása.)
+* Az exportált PNG fájl szélessége és magasság megadható (pixelben).
+
 Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmódban. A program átkapcsolható a legfelső gombbal 'Modellezés' üzemmódba, ekkor kiválasztható az egyes tényezők függvényformája; ez esetben az így kapott modell vizualizációja jelenik meg jobb oldalon.
 
 # Megjegyzések
@@ -59,7 +65,7 @@ Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmó
 
 ## Módszertani megjegyzések
 
-* Az NRR-ben fellelhető "Megyén kívüli" jelzésű megyéjű alanyokat a program eldobja. (Így ugyan keletkezik némi veszteség, hiszen például életkori vagy nemi elemzésekhez ezek felhasználhatóak lennének, de ez egyrészt egészen minimumális - 0,1% körüli - másrészt így minden eredmény konzisztens, olyan értelemben, hogy ugyanazon alanyok alapján készült.)
+* Az NRR-ben fellelhető "Megyén kívüli" jelzésű megyéjű alanyokat a program eldobja. (Így ugyan keletkezik némi veszteség, hiszen például életkori vagy nemi elemzésekhez ezek felhasználhatóak lennének, de ez egyrészt egészen minimális - 0,1% körüli - másrészt így minden eredmény konzisztens, olyan értelemben, hogy ugyanazon alanyok alapján készült.)
 * A standard populációkat [külön fájl](StdPops18.csv) tárolja, ezek - a hozzájuk tartozó irodalmi hivatkozásokkal - a következőek:
 
   + Segi-Doll (1960): Segi, M. (1960) Cancer Mortality for Selected Sites in 24 Countries (1950–57). Department of Public Health, Tohoku University of Medicine, Sendai, Japan. Doll, R., Payne, P., Waterhouse, J.A.H. eds (1966). Cancer Incidence in Five Continents, Vol. I. Union Internationale Contre le Cancer, Geneva.
@@ -74,7 +80,7 @@ Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmó
 ## Technikai megjegyzések
 
 * A program `R` statisztikai környezet alatt fut, az adatbázis kezelésére `data.table` könyvtárat használ, a webes felület létrehozása és kezelése pedig `shiny` segítségével valósul meg.
-* A vizualizáció a grafikonok esetében `lattice`-szal (illetve részben az azon alapuló `Hmisc`-kel) történik, a térképek esetében az `sp` csomaggal.
+* A vizualizáció a grafikonok esetében `lattice`-szal (illetve az azon alapuló `Hmisc`-kel) történik, a térképek esetében az `sp` csomaggal.
 * A program automatikusan scrape-eli le az NNR adatbázisát a `httr` és az `rvest` könyvtárak használatával, évenkénti bontásban, majd az eredményeket [egy fájlba](RawDataWide.csv) fűzi, és végül [long formátumra](RawDataLong.csv.gz) alakítja.
 * A háttérpopuláció létszámait (lényegében tehát a magyar korfát) a KSH Statinfo adatbázisából kéri le a progam, a saját fejlesztésű [KSHStatinfoScraper](https://github.com/tamas-ferenci/KSHStatinfoScraper) csomag használatával (minden évre az évközepi lélekszámot használva). A long formátumú adatokat a melléjük illesztett háttérpopulációs létszámokkal ismét [külön fájlban](RawDataLongWPop.csv.gz) tárolja.
 * A direkt standardizáció elvégzéséhez a program az `epitools` csomagot használja.
@@ -85,3 +91,4 @@ Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmó
 Verzió|Dátum|Kommentár
 ------|-----|---------
 v2.00|2018-08-28|Kiinduló változat. (A 2.00-s verziószám "hagyománytiszteletből" került rá, utalva a számos korábbi, változó fokban kiforrott változatra, melyek egy része már elérhető volt nyilvánosan is.)
+v2.10|2018-10-11|<ul><li>Az exportált PNG fájl méretei beállíthatóak lettek.</li><li>Az ábráknál a függőleges tengely/színtengely kézzel is skálázható lett (tehát a minimuma és a maximuma kézzel is megadható).</li><li>Az ábráknál (a térképek kivételével) a függőleges tengely mindenhol logaritmikussá tehető.</li><li>Az ábrák címei egységesek és logikusabbak lettek (a cím alatti sorban zárójelben jelennek meg a paraméterek).</li><li>Konfidenciaintervallum mindenre rakható lett a térképek kivételével.</li><li>A haladó beállítások csoportosítva, külön, egy alapértelmezetten nem megjelenő (külön gombbal megjeleníthető) panelre kerültek.</li></ul>
