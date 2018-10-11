@@ -120,7 +120,7 @@ ui <- fluidPage(
     )
   ),
   
-  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.00" ),
+  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.10" ),
   
   tags$script( HTML( "var sc_project=11601191; 
                      var sc_invisible=1; 
