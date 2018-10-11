@@ -295,11 +295,16 @@ server <- function( input, output, session ) {
           if( input$VerticalAxisLogarithmic ) {
             if( ran[1]<1 ) ran[1] <- 1
             if( input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&input$Subtask=="Nemspecifikus incidencia" ) {
-              pars <- c( pars, list( xlim = list( c( 0.5, 2.5 ) ), pch = 19, cex = 1.5,
+              pars <- c( pars, list( xlim = c( 0.5, 2.5 ), pch = 19, cex = 1.5,
                                      scales = list( x = list( at = 1:2, labels = c( "Férfi", "Nő" ) ),
                                                     y = list( log = 10, at = axisTicks( log10( ran ), log = TRUE ) ) ) ) )
             } else {
               pars <- c( pars, list( scales = list( y = list( log = 10, at = axisTicks( log10( ran ), log = TRUE ) ) ) ) )
+            }
+          } else {
+            if( input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&input$Subtask=="Nemspecifikus incidencia" ) {
+              pars <- c( pars, list( xlim = c( 0.5, 2.5 ), pch = 19, cex = 1.5,
+                                     scales = list( x = list( at = 1:2, labels = c( "Férfi", "Nő" ) ) ) ) )
             }
           }
           pars <- c( pars, ylim = list( ran ) )
