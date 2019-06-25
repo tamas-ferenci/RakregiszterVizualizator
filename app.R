@@ -98,9 +98,9 @@ ui <- fluidPage(
                                           fluidRow( column( 6, uiOutput( "VerticalAxisScaleMinOut" ) ),
                                                     column( 6, uiOutput( "VerticalAxisScaleMaxOut" ) ) ),
                                           fluidRow( column( 6, numericInput( "PngWidth", "PNG fájl szélessége (pixelben):",
-                                                                             480, 1, 4800, 1 ) ),
+                                                                             3600, 1, 4800, 1 ) ),
                                                     column( 6, numericInput( "PngHeight", "PNG fájl magassága (pixelben):",
-                                                                             480, 1, 4800, 1 ) ) ) )
+                                                                             2400, 1, 4800, 1 ) ) ) )
       ),
       
       conditionalPanel( "input.Mod=='Modellezés'",
@@ -120,7 +120,7 @@ ui <- fluidPage(
     )
   ),
   
-  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.10" ),
+  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.11" ),
   
   tags$script( HTML( "var sc_project=11601191; 
                      var sc_invisible=1; 
@@ -260,7 +260,8 @@ server <- function( input, output, session ) {
                                                .( Age, Sex, Year ) ], by = c( "Age", "Sex" ) )[
                                                  , as.list( epitools::ageadjust.direct(
                                                    N, Population, stdpop = eval( parse( text = input$Standard ) ) ) *100000 ),
-                                                 .( Year ) ][ , .( Year = Year, Inc = adj.rate, IncCIlwr = lci, IncCIupr = uci ) ],
+                                                 .( Year ) ][ , .( Year = Year, Inc = adj.rate, IncCIlwr = lci,
+                                                                   IncCIupr = uci ) ],
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = scales::alpha( lattice::trellis.par.get()$superpose.line$col, 0.5 ),
                         main = MainLab )
@@ -317,8 +318,9 @@ server <- function( input, output, session ) {
         
         print( do.call( if( !input$Feladat%in%MapTask ) Hmisc::xYplot else sp::spplot, pars ) )
         
-        grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
-        grid::grid.text( "http://research.physcon.uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "Ferenci Tamás, 2019", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
+        grid::grid.text( "http://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
         
       } else {
         
@@ -365,9 +367,9 @@ server <- function( input, output, session ) {
                             "yhat", cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ) )
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
-        grid::grid.text( "Ferenci Tamás, 2018", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
-        grid::grid.text( "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/", 1, 0.02,
-                         gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "Ferenci Tamás, 2019", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
+        grid::grid.text( "http://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
       }
     }
   }
@@ -387,7 +389,8 @@ server <- function( input, output, session ) {
   output$AbraLetoltesPNG <- downloadHandler(
     filename = "RakregiszterVizualizatorPlot.png",
     content = function( file ) {
-      png( file, width = input$PngWidth, height = input$PngHeight, res = 300, type = "cairo-png" )
+      png( file, width = input$PngWidth, height = input$PngHeight,
+           res = 72*min( c( input$PngWidth, input$PngHeight ) )/480, type = "cairo-png" )
       print( plotInput() )
       dev.off( )
     } )
