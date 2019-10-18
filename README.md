@@ -18,7 +18,7 @@ A projektnek - legkevésbé sem titkolt - célja az is, hogy demonstrálja, mint
 
 # A program funkciói
 
-A megbetegedések esetszámai, az, hogy 10 vastagbélrákos eset fordult elő, önmagában nem sokat jelent. (Ne feledjük, az NNR-ben ez szerepel!) Viszonyítani kell őket, minimum két szempont alapján: mennyi emberből (még pontosabban: a megbetegedés kockázatának kitett emberből) és mennyi idő alatt történt ennyi eset. Nagyon nem mindegy, hogy 100-ból betegedtek meg 10-en vagy 100 ezerből, és nem mindegy, hogy 1 hónap alatt vagy 10 év alatt.
+A megbetegedések esetszámai, az, hogy 10 vastagbélrákos eset fordult elő, önmagában nem sokat jelent. (Ne feledjük, az NRR-ben ez szerepel!) Viszonyítani kell őket, minimum két szempont alapján: mennyi emberből (még pontosabban: a megbetegedés kockázatának kitett emberből) és mennyi idő alatt történt ennyi eset. Nagyon nem mindegy, hogy 100-ból betegedtek meg 10-en vagy 100 ezerből, és nem mindegy, hogy 1 hónap alatt vagy 10 év alatt.
 
 ## Az incidencia fogalma
 
@@ -81,7 +81,7 @@ Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmó
 
 * A program `R` statisztikai környezet alatt fut, az adatbázis kezelésére `data.table` könyvtárat használ, a webes felület létrehozása és kezelése pedig `shiny` segítségével valósul meg.
 * A vizualizáció a grafikonok esetében `lattice`-szal (illetve az azon alapuló `Hmisc`-kel) történik, a térképek esetében az `sp` csomaggal.
-* A program automatikusan scrape-eli le az NNR adatbázisát a `httr` és az `rvest` könyvtárak használatával, évenkénti bontásban, majd az eredményeket [egy fájlba](RawDataWide.csv) fűzi, és végül [long formátumra](RawDataLong.csv.gz) alakítja.
+* A program automatikusan scrape-eli le az NRR adatbázisát a `httr` és az `rvest` könyvtárak használatával, évenkénti bontásban, majd az eredményeket [egy fájlba](RawDataWide.csv) fűzi, és végül [long formátumra](RawDataLong.csv.gz) alakítja.
 * A háttérpopuláció létszámait (lényegében tehát a magyar korfát) a KSH Statinfo adatbázisából kéri le a progam, a saját fejlesztésű [KSHStatinfoScraper](https://github.com/tamas-ferenci/KSHStatinfoScraper) csomag használatával (minden évre az évközepi lélekszámot használva). A long formátumú adatokat a melléjük illesztett háttérpopulációs létszámokkal ismét [külön fájlban](RawDataLongWPop.csv.gz) tárolja.
 * A direkt standardizáció elvégzéséhez a program az `epitools` csomagot használja.
 * A flexibilis modellezés az `rms` csomag segítségével történik.
