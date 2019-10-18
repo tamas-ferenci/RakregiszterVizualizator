@@ -92,4 +92,5 @@ Verzió|Dátum|Kommentár
 ------|-----|---------
 v2.00|2018-08-28|Kiinduló változat. (A 2.00-s verziószám "hagyománytiszteletből" került rá, utalva a számos korábbi, változó fokban kiforrott változatra, melyek egy része már elérhető volt nyilvánosan is.)
 v2.10|2018-10-11|<ul><li>Az exportált PNG fájl méretei beállíthatóak lettek.</li><li>Az ábráknál a függőleges tengely/színtengely kézzel is skálázható lett (tehát a minimuma és a maximuma kézzel is megadható).</li><li>Az ábráknál (a térképek kivételével) a függőleges tengely mindenhol logaritmikussá tehető.</li><li>Az ábrák címei egységesek és logikusabbak lettek (a cím alatti sorban zárójelben jelennek meg a paraméterek).</li><li>Konfidenciaintervallum mindenre rakható lett a térképek kivételével.</li><li>A haladó beállítások csoportosítva, külön, egy alapértelmezetten nem megjelenő (külön gombbal megjeleníthető) panelre kerültek.</li></ul>
-v2.11|2019-06-25|Hibajavítás: az exportált PNG-kép nem jó.
+v2.11|2019-06-25|Hibajavítás: az exportált PNG-kép nem volt jó.
+v2.12|2019-10-18|Hibajavítás: a modellezés üzemmódban a megyét nem lehetett nem-paraméteresre állítani.

@@ -120,7 +120,7 @@ ui <- fluidPage(
     )
   ),
   
-  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.11" ),
+  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.12" ),
   
   tags$script( HTML( "var sc_project=11601191; 
                      var sc_invisible=1; 
@@ -363,7 +363,7 @@ server <- function( input, output, session ) {
         } else {
           p1 <- plot( rms::Predict( fit, Age, Sex ), anova = anova( fit ), pval = TRUE )
           p2 <- plot( rms::Predict( fit, Year ), anova = anova( fit ), pval = TRUE )
-          p3 <- sp::spplot( sp::merge( MapHunNUTS3, data.table( Predict( fit, County ) )[ , .( NAME = County, yhat ) ] ),
+          p3 <- sp::spplot( sp::merge( MapHunNUTS3, data.table( rms::Predict( fit, County ) )[ , .( NAME = County, yhat ) ] ),
                             "yhat", cuts = 999, col.regions = colorRampPalette( c( "green", "red" ) )( 1000 ) )
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
