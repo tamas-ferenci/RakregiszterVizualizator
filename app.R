@@ -26,9 +26,9 @@ ui <- fluidPage(
     tags$meta( property = "og:type", content = "website" ),
     tags$meta( property = "og:locale", content = "hu_HU" ),
     tags$meta( property = "og:url",
-               content = "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
+               content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
     tags$meta( property = "og:image",
-               content = "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator_Pelda.png" ),
+               content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator_Pelda.png" ),
     tags$meta( property = "og:description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
                                                               "használhatóvá tevő, vizualizáló alkalmazás. ",
                                                               "Írta: Ferenci Tamás." ) ),
@@ -38,7 +38,7 @@ ui <- fluidPage(
     tags$meta( name = "DC.Description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
                                                           "használhatóvá tevő, vizualizáló alkalmazás. " ) ),
     tags$meta( name = "DC.Publisher",
-               content = "http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
+               content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
     tags$meta( name = "DC.Contributor", content = "Ferenci Tamás" ),
     tags$meta( name = "DC.Language", content = "hu_HU" )
   ),
@@ -60,7 +60,7 @@ ui <- fluidPage(
      a( "itt", href = "https://github.com/tamas-ferenci/RakregiszterVizualizator",
         target = "_blank" ), "olvashatóak el." ),
   div( class="fb-like",
-       "data-href"="http://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
+       "data-href"="https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
        "data-layout"="standard", "data-action"="like", "data-size"="small",
        "data-show-faces"="true", "data-share"="true"), p(),
   
@@ -319,7 +319,7 @@ server <- function( input, output, session ) {
         print( do.call( if( !input$Feladat%in%MapTask ) Hmisc::xYplot else sp::spplot, pars ) )
         
         grid::grid.text( "Ferenci Tamás, 2019", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
-        grid::grid.text( "http://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "https://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
         grid::grid.text( "uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
         
       } else {
@@ -368,7 +368,7 @@ server <- function( input, output, session ) {
           gridExtra::grid.arrange( p1, p2, p3, layout_matrix = rbind( c( 1, 2 ), c( 3, 3 ) ) )
         }
         grid::grid.text( "Ferenci Tamás, 2019", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
-        grid::grid.text( "http://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
+        grid::grid.text( "https://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
         grid::grid.text( "uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
       }
     }
