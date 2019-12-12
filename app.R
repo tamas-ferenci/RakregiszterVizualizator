@@ -19,6 +19,16 @@ ui <- fluidPage(
   theme = "owntheme.css",
   
   tags$head( 
+    
+    tags$script( async = NA, src = "https://www.googletagmanager.com/gtag/js?id=UA-19799395-3" ),
+    tags$script( HTML( "
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+                       
+    gtag('config', 'UA-19799395-3');
+    " ) ),
+    
     tags$meta( name = "description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
                                                        "használhatóvá tevő, vizualizáló alkalmazás. ",
                                                        "Írta: Ferenci Tamás." ) ),
@@ -349,7 +359,7 @@ server <- function( input, output, session ) {
         options( datadist = "dd" )
         
         fit <- rms::Glm( as.formula( paste( ModelFormula, collapse = "" ) ), offset = log( Population ),
-                    data = RawDataModel, family = poisson )
+                         data = RawDataModel, family = poisson )
         
         if( input$CountyModel!="Nem-paraméteres" ) {
           p1 <- plot( rms::Predict( fit, Age, Sex ), anova = anova( fit ), pval = TRUE )
