@@ -44,13 +44,8 @@ ui <- fluidPage(
   ),
   
   tags$div( id="fb-root" ),
-  tags$script( HTML( "(function(d, s, id) {
-                     var js, fjs = d.getElementsByTagName(s)[0];
-                     if (d.getElementById(id)) return;
-                     js = d.createElement(s); js.id = id;
-                     js.src = 'https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v2.12';
-                     fjs.parentNode.insertBefore(js, fjs);
-                     }(document, 'script', 'facebook-jssdk'));" ) ),
+  tags$script( async = NA, defer = NA, crossorigin = "anonymous",
+               src = "https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v5.0" ),
   
   tags$style( ".shiny-file-input-progress {display: none}" ),
   
@@ -61,8 +56,8 @@ ui <- fluidPage(
         target = "_blank" ), "olvashatóak el." ),
   div( class="fb-like",
        "data-href"="https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
-       "data-layout"="standard", "data-action"="like", "data-size"="small",
-       "data-show-faces"="true", "data-share"="true"), p(),
+       "data-width" = "", "data-layout"="standard", "data-action"="like", "data-size"="small",
+       "data-share"="true"), p(),
   
   sidebarLayout(
     
