@@ -55,7 +55,7 @@ ui <- fluidPage(
      a( "itt", href = "https://github.com/tamas-ferenci/RakregiszterVizualizator",
         target = "_blank" ), "olvashatóak el." ),
   div( class="fb-like",
-       "data-href"="https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
+       "data-href"="https://research.physcon.uni-obuda.hu/RakregiszterVizualizator",
        "data-width" = "", "data-layout"="standard", "data-action"="like", "data-size"="small",
        "data-share"="true"), p(),
   
