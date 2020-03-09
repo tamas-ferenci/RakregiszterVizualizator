@@ -233,18 +233,22 @@ server <- function( input, output, session ) {
             byvars <- c( "None", "Year", "Sex" )
           }
           
+          if( input$Stratification=="Megyénként" ) {
+            PlotFormula <- paste0( PlotFormula, " | County " )
+            byvars <- c( byvars, "County" )
+          }
+          
           MainLab <- paste0( MainLab, ")" )
           
           pars <- list( formula = as.formula( PlotFormula ), groups = as.name( "groups" ),
                         ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év",
-                        data = RawData[ ICDCode==dg,
+                        data = RawData[ ICDCode==dg&County%in%megye,
                                         binomCI( sum( N ), sum( Population ), input$CIconf/100,
                                                  eval( parse( text = groupvar ) ) ), by = byvars ],
                         label.curves = TRUE,
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = scales::alpha( lattice::trellis.par.get()$superpose.line$col, 0.5 ),
                         main = MainLab, type = "l" )
-          ### TODO: megyénkénti bontás
           
         } else if( input$Feladat=="Nyers incidencia alakulása időben" ) {
           PlotFormula <- paste0( PlotFormula, "Year" )
@@ -407,7 +411,9 @@ server <- function( input, output, session ) {
                                             "Nemspecifikus incidencia" ) ) else NULL )
   
   output$StratificationUI <- renderUI( if( input$Feladat=="Kor- és/vagy nemspecifikus incidencia" )
-    selectInput( "Stratification", "Lebontás", c( "Nincs", "Évente", "Megyénként" ) ) else NULL )
+    selectInput( "Stratification", "Lebontás", c( "Nincs", "Évente", "Megyénként" ) ) else if(
+      input$Feladat=="Kor- és/vagy nemspecifikus incidencia alakulása időben" )
+      selectInput( "Stratification", "Lebontás", c( "Nincs", "Megyénként" ) ) else NULL )
   
   output$StandardUI <- renderUI( if( input$Feladat%in%c( "Standardizált incidencia alakulása időben",
                                                          "Megyénkénti standardizált incidenciák" ) )
@@ -432,7 +438,8 @@ server <- function( input, output, session ) {
   } )
   
   output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&
-                                       input$Feladat=="Kor- és/vagy nemspecifikus incidencia"&&
+                                       input$Feladat%in%c( "Kor- és/vagy nemspecifikus incidencia",
+                                                           "Kor- és/vagy nemspecifikus incidencia alakulása időben" )&&
                                        !input$Stratification=="Megyénként" ) {
     selectInput( "County", "Megye", c( "Összes", sort( unique( RawData$County ) ) ) )
   } )
