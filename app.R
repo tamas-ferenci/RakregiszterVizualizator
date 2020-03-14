@@ -1,3 +1,6 @@
+#as.table = T
+#BAZ megye meg pár még nem fér ki
+
 library( shiny )
 library( data.table )
 
@@ -8,6 +11,13 @@ RawData$SexAge <- interaction( RawData$Sex, RawData$Age, sep = " - " )
 ICDs <- readRDS( "ICDs.dat" )
 StdPops <- readRDS( "StdPops.dat" )
 MapHunNUTS3 <- readRDS( "MapHunNUTS3.dat" )
+StdPopNames <- c( StdESP2013 = "ESP, 2013", StdSegiDoll1960 = "Segi-Doll, 1960", StdWHO2001 = "WHO, 2001",
+                  StdHUN = "Magyar, 2001-2015" )
+
+c( "Segi-Doll (1960)" = "StdSegiDoll1960",
+   "ESP (2013)" = "StdESP2013",
+   "WHO (2001)" = "StdWHO2001",
+   "Magyar (2001-2015)" = "StdHUN" )
 
 binomCI <- function( x, n, conf.level, groups, mult = 100000 ) {
   list( IncCIlwr = ifelse( x == 0, 0, qbeta( (1 - conf.level)/2, x, n - x + 1 ) )*mult,
@@ -252,29 +262,36 @@ server <- function( input, output, session ) {
           
         } else if( input$Feladat=="Nyers incidencia alakulása időben" ) {
           PlotFormula <- paste0( PlotFormula, "Year" )
+          byvars <- c( "None", "Year" )
+          if( input$Stratification=="Megyénként" ) {
+            PlotFormula <- paste0( PlotFormula, " | County " )
+            byvars <- c( byvars, "County" )
+          }
           MainLab <- paste0( MainLab, ")" )
-          pars <- list( formula = as.formula( PlotFormula ), ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év", type = "b",
-                        data = RawData[ ICDCode==dg, binomCI( sum( N ), sum( Population ), input$CIconf/100, "None" ),
-                                        .( Year ) ],
+          pars <- list( formula = as.formula( PlotFormula ), ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év",
+                        data = RawData[ ICDCode==dg&County%in%megye,
+                                        binomCI( sum( N ), sum( Population ), input$CIconf/100, "None" ), by = byvars ],
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = scales::alpha( lattice::trellis.par.get()$superpose.line$col, 0.5 ),
-                        main = MainLab )
-          ### TODO: megyénkénti bontás (többféleképp)
+                        main = MainLab, type = "b" )
         } else if( input$Feladat=="Standardizált incidencia alakulása időben" ) {
           PlotFormula <- paste0( PlotFormula, "Year" )
-          MainLab <- paste0( MainLab, ", Standard: ", input$Standard, ")" )
-          pars <- list( formula = as.formula( PlotFormula ), ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év", type = "b",
+          byvars <- c( "None", "Year" )
+          if( input$Stratification=="Megyénként" ) {
+            PlotFormula <- paste0( PlotFormula, " | County " )
+            byvars <- c( byvars, "County" )
+          }
+          MainLab <- paste0( MainLab, ", Standard: ", StdPopNames[input$Standard], ")" )
+          pars <- list( formula = as.formula( PlotFormula ), ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év",
                         data = merge( StdPops,
-                                      RawData[ ICDCode==dg, .( N = sum( N ), Population = sum( Population ) ),
-                                               .( Age, Sex, Year ) ], by = c( "Age", "Sex" ) )[
-                                                 , as.list( epitools::ageadjust.direct(
-                                                   N, Population, stdpop = eval( parse( text = input$Standard ) ) ) *100000 ),
-                                                 .( Year ) ][ , .( Year = Year, Inc = adj.rate, IncCIlwr = lci,
-                                                                   IncCIupr = uci ) ],
+                                      RawData[ ICDCode==dg&County%in%megye, .( N = sum( N ), Population = sum( Population ) ),
+                                                c( "Age", "Sex", byvars ) ], by = c( "Age", "Sex" ) )[
+                                                 , with( as.list( epitools::ageadjust.direct(
+                                                   N, Population, stdpop = eval( parse( text = input$Standard ) ) )*1e5 ),
+                                                   list( Inc = adj.rate, IncCIlwr = lci, IncCIupr = uci ) ), byvars ],
                         method = if( is.null( input$CIstyle )||input$CIstyle=="Sávok" ) "bars" else "filled bands",
                         col.fill = scales::alpha( lattice::trellis.par.get()$superpose.line$col, 0.5 ),
-                        main = MainLab )
-          ### TODO: A standard nevét is kiírni a címben
+                        main = MainLab, type = "b" )
         } else if( input$Feladat=="Megyénkénti nyers incidenciák"  ) {
           MainLab <- paste0( MainLab, ")" )
           pars <- list( obj = sp::merge( MapHunNUTS3, RawData[ ICDCode==dg&Year%in%ev, .(
@@ -327,7 +344,7 @@ server <- function( input, output, session ) {
         
         print( do.call( if( !input$Feladat%in%MapTask ) Hmisc::xYplot else sp::spplot, pars ) )
         
-        grid::grid.text( "Ferenci Tamás, 2019", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
+        grid::grid.text( "Ferenci Tamás, 2020", 0, 0.02, gp = grid::gpar( fontface = "bold" ), just = "left" )
         grid::grid.text( "https://research.physcon.", 1, 0.05, gp = grid::gpar( fontface = "bold" ), just = "right" )
         grid::grid.text( "uni-obuda.hu", 1, 0.02, gp = grid::gpar( fontface = "bold" ), just = "right" )
         
@@ -411,16 +428,15 @@ server <- function( input, output, session ) {
                                             "Nemspecifikus incidencia" ) ) else NULL )
   
   output$StratificationUI <- renderUI( if( input$Feladat=="Kor- és/vagy nemspecifikus incidencia" )
-    selectInput( "Stratification", "Lebontás", c( "Nincs", "Évente", "Megyénként" ) ) else if(
-      input$Feladat=="Kor- és/vagy nemspecifikus incidencia alakulása időben" )
+    selectInput( "Stratification", "Lebontás", c( "Nincs", "Évente", "Megyénként" ) ) else if( !input$Feladat%in%MapTask )
       selectInput( "Stratification", "Lebontás", c( "Nincs", "Megyénként" ) ) else NULL )
   
   output$StandardUI <- renderUI( if( input$Feladat%in%c( "Standardizált incidencia alakulása időben",
                                                          "Megyénkénti standardizált incidenciák" ) )
-    selectInput( "Standard", "Standard", c( "Segi-Doll (1960)" = "StdSegiDoll1960",
-                                            "ESP (2013)" = "StdESP2013",
-                                            "WHO (2001)" = "StdWHO2001",
-                                            "Magyar (2001-2015)" = "StdHUN" ) ) else NULL )
+    selectInput( "Standard", "Standard", c( "Segi-Doll, 1960" = "StdSegiDoll1960",
+                                            "ESP, 2013" = "StdESP2013",
+                                            "WHO, 2001" = "StdWHO2001",
+                                            "Magyar, 2001-2015" = "StdHUN" ) ) else NULL )
   
   output$CIout <- renderUI( if( !input$Feladat%in%MapTask )
     checkboxInput( "CI", "Konfidenciaintervallum" ) else NULL )
@@ -437,10 +453,8 @@ server <- function( input, output, session ) {
     selectInput( "Year", "Év", c( "Összes", sort( unique( RawData$Year ) ) ) )
   } )
   
-  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&
-                                       input$Feladat%in%c( "Kor- és/vagy nemspecifikus incidencia",
-                                                           "Kor- és/vagy nemspecifikus incidencia alakulása időben" )&&
-                                       !input$Stratification=="Megyénként" ) {
+  output$CountySelect <- renderUI( if( !is.null( input$Stratification )&&!input$Stratification=="Megyénként"&&
+                                       !input$Feladat%in%MapTask ) {
     selectInput( "County", "Megye", c( "Összes", sort( unique( RawData$County ) ) ) )
   } )
   
