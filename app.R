@@ -65,7 +65,7 @@ ui <- fluidPage(
   
   tags$div( id="fb-root" ),
   tags$script( async = NA, defer = NA, crossorigin = "anonymous",
-               src = "https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v5.0" ),
+               src = "https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v6.0" ),
   
   tags$style( ".shiny-file-input-progress {display: none}" ),
   
