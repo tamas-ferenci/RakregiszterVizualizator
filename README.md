@@ -82,7 +82,7 @@ Ezek a funkciók érhetőek el az - alapértelmezett - 'Vizualizáció' üzemmó
 * A program `R` statisztikai környezet alatt fut, az adatbázis kezelésére `data.table` könyvtárat használ, a webes felület létrehozása és kezelése pedig `shiny` segítségével valósul meg.
 * A vizualizáció a grafikonok esetében `lattice`-szal (illetve az azon alapuló `Hmisc`-kel) történik, a térképek esetében az `sp` csomaggal.
 * A program automatikusan scrape-eli le az NRR adatbázisát a `httr` és az `rvest` könyvtárak használatával, évenkénti bontásban, majd az eredményeket [egy fájlba](RawDataWide.csv) fűzi, és végül [long formátumra](RawDataLong.csv.gz) alakítja.
-* A háttérpopuláció létszámait (lényegében tehát a magyar korfát) a KSH Statinfo adatbázisából kéri le a progam, a saját fejlesztésű [KSHStatinfoScraper](https://github.com/tamas-ferenci/KSHStatinfoScraper) csomag használatával (minden évre az évközepi lélekszámot használva). A long formátumú adatokat a melléjük illesztett háttérpopulációs létszámokkal ismét [külön fájlban](RawDataLongWPop.csv.gz) tárolja.
+* A háttérpopuláció lélekszámai a [KSH tájékoztatási adatbázis](https://statinfo.ksh.hu/Statinfo/themeSelector.jsp?lang=hu) NT1C02 és NT2C02 jelű tábláiból származnak (minden évre az évközepi lélekszámot használva, a területi egységhez nem rendelhető számokat eldobva). A long formátumú adatokat a melléjük illesztett háttérpopulációs létszámokkal ismét [külön fájlban](RawDataLongWPop.csv.gz) tárolja.
 * A direkt standardizáció elvégzéséhez a program az `epitools` csomagot használja.
 * A flexibilis modellezés az `rms` csomag segítségével történik.
 
@@ -95,3 +95,4 @@ v2.10|2018-10-11|<ul><li>Az exportált PNG fájl méretei beállíthatóak lette
 v2.11|2019-06-25|Hibajavítás: az exportált PNG-kép nem volt jó.
 v2.12|2019-10-18|Hibajavítás: a modellezés üzemmódban a megyét nem lehetett nem-paraméteresre állítani.
 v2.20|2020-03-09|<ul><li>A 'Kor- és/vagy nemspecifikus incidencia alakulása időben' pont is lebontható megyék szerint, illetve kiválaszható egyetlen megye.</li><li>A 'Nyers incidencia alakulása időben' és a 'Standardizált incidencia alakulása időben' pont is lebontható megyék szerint, illetve kiválaszható egyetlen megye.</li><li>A 'Standardizált incidencia alakulása időben' pont elegánsabban írja ki a standard nevét az ábra fejlécében.</li></ul>
+v2.21|2021-09-28|Frissítés az NRR aktuális adataira (2000-2018 elérhető) és a scraper frissítése az NRR aktuális adatszolgáltatási formátumára.

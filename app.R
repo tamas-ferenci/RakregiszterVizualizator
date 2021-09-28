@@ -1,28 +1,23 @@
 #as.table = T
 #BAZ megye meg pár még nem fér ki
 
-library( shiny )
-library( data.table )
+library(shiny)
+library(data.table)
 
-RawData <- readRDS( "RawDataLongWPop.dat" )
+RawData <- readRDS("RawDataLongWPop.rds")
 RawData$None <- "None"
-RawData$SexNum <- ifelse( RawData$Sex=="Férfi", 1, 2 )
-RawData$SexAge <- interaction( RawData$Sex, RawData$Age, sep = " - " )
-ICDs <- readRDS( "ICDs.dat" )
-StdPops <- readRDS( "StdPops.dat" )
-MapHunNUTS3 <- readRDS( "MapHunNUTS3.dat" )
-StdPopNames <- c( StdESP2013 = "ESP, 2013", StdSegiDoll1960 = "Segi-Doll, 1960", StdWHO2001 = "WHO, 2001",
-                  StdHUN = "Magyar, 2001-2015" )
+RawData$SexNum <- ifelse(RawData$Sex=="Férfi", 1, 2)
+RawData$SexAge <- interaction(RawData$Sex, RawData$Age, sep = " - ")
+ICDs <- readRDS("ICDs.rds")
+StdPops <- readRDS("StdPops.rds")
+MapHunNUTS3 <- readRDS("MapHunNUTS3.rds")
+StdPopNames <- c(StdESP2013 = "ESP, 2013", StdSegiDoll1960 = "Segi-Doll, 1960", StdWHO2001 = "WHO, 2001",
+                 StdHUN = "Magyar, 2000-2018")
 
-c( "Segi-Doll (1960)" = "StdSegiDoll1960",
-   "ESP (2013)" = "StdESP2013",
-   "WHO (2001)" = "StdWHO2001",
-   "Magyar (2001-2015)" = "StdHUN" )
-
-binomCI <- function( x, n, conf.level, groups, mult = 100000 ) {
-  list( IncCIlwr = ifelse( x == 0, 0, qbeta( (1 - conf.level)/2, x, n - x + 1 ) )*mult,
-        IncCIupr = ifelse( x == n, 1, qbeta( 1 - (1 - conf.level)/2, x + 1, n - x ) )*mult,
-        Inc = x/n*mult, groups = groups )
+binomCI <- function(x, n, conf.level, groups, mult = 100000) {
+  list(IncCIlwr = ifelse(x == 0, 0, qbeta((1 - conf.level)/2, x, n - x + 1))*mult,
+       IncCIupr = ifelse(x == n, 1, qbeta(1 - (1 - conf.level)/2, x + 1, n - x))*mult,
+       Inc = x/n*mult, groups = groups)
 }
 
 ui <- fluidPage(
@@ -39,9 +34,10 @@ ui <- fluidPage(
     gtag('config', 'UA-19799395-3');
     " ) ),
     
-    tags$meta( name = "description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
-                                                       "használhatóvá tevő, vizualizáló alkalmazás. ",
-                                                       "Írta: Ferenci Tamás." ) ),
+    tags$meta( name = "description",
+               content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
+                                 "használhatóvá tevő, vizualizáló alkalmazás. ",
+                                 "Írta: Ferenci Tamás." ) ),
     tags$meta( property = "og:title", content = "Rákregiszter vizualizátor" ),
     tags$meta( property = "og:type", content = "website" ),
     tags$meta( property = "og:locale", content = "hu_HU" ),
@@ -49,35 +45,43 @@ ui <- fluidPage(
                content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
     tags$meta( property = "og:image",
                content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator_Pelda.png" ),
-    tags$meta( property = "og:description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
-                                                              "használhatóvá tevő, vizualizáló alkalmazás. ",
-                                                              "Írta: Ferenci Tamás." ) ),
+    tags$meta( property = "og:description",
+               content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
+                                 "használhatóvá tevő, vizualizáló alkalmazás. ",
+                                 "Írta: Ferenci Tamás." ) ),
     tags$meta( name = "DC.Title", content = "Rákregiszter vizualizátor" ),
     tags$meta( name = "DC.Creator", content = "Ferenci Tamás" ),
     tags$meta( name = "DC.Subject", content = "rákepidemiológia" ),
-    tags$meta( name = "DC.Description", content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
-                                                          "használhatóvá tevő, vizualizáló alkalmazás. " ) ),
+    tags$meta( name = "DC.Description",
+               content = paste0( "A magyar Rákregiszter adatait feldolgozó, azokat kényelmesen ",
+                                 "használhatóvá tevő, vizualizáló alkalmazás. " ) ),
     tags$meta( name = "DC.Publisher",
                content = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/" ),
     tags$meta( name = "DC.Contributor", content = "Ferenci Tamás" ),
     tags$meta( name = "DC.Language", content = "hu_HU" )
   ),
   
-  tags$div( id="fb-root" ),
-  tags$script( async = NA, defer = NA, crossorigin = "anonymous",
-               src = "https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v6.0" ),
+  tags$div(id = "fb-root"),
+  tags$script(async = NA, defer = NA, crossorigin = "anonymous",
+              src = "https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v11.0"),
   
   tags$style( ".shiny-file-input-progress {display: none}" ),
   
   titlePanel( "Rákregiszter vizualizátor" ),
   
-  p( "A program használatát részletesen bemutató súgó, valamint a technikai részletek",
-     a( "itt", href = "https://github.com/tamas-ferenci/RakregiszterVizualizator",
-        target = "_blank" ), "olvashatóak el." ),
-  div( class="fb-like",
-       "data-href"="https://research.physcon.uni-obuda.hu/RakregiszterVizualizator",
-       "data-width" = "", "data-layout"="standard", "data-action"="like", "data-size"="small",
-       "data-share"="true"), p(),
+  p("A program használatát részletesen bemutató súgó, valamint a technikai részletek",
+    a("itt", href = "https://github.com/tamas-ferenci/RakregiszterVizualizator", target = "_blank"),
+    "olvashatóak el. Írta: Ferenci Tamás."),
+  div(class = "fb-share-button", "data-href" = "https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
+      "data-layout" = "button_count", "data-size" = "small"),
+  a(target = "_blank",
+    href = "https://www.facebook.com/sharer/sharer.php?u=https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
+    class = "fb-xfbml-parse-ignore"),
+  
+  a(href = "https://twitter.com/intent/tweet?url=https://research.physcon.uni-obuda.hu/RakregiszterVizualizator/",
+    "Tweet", class = "twitter-share-button"),
+  includeScript("http://platform.twitter.com/widgets.js"),
+  p(),
   
   sidebarLayout(
     
@@ -90,12 +94,13 @@ ui <- fluidPage(
       conditionalPanel( "input.Mod=='Vizualizáció'",
                         
                         h3( "Vizualizáció" ),
-                        selectInput( "Feladat", "Feladat", c( "Kor- és/vagy nemspecifikus incidencia",
-                                                              "Kor- és/vagy nemspecifikus incidencia alakulása időben",
-                                                              "Nyers incidencia alakulása időben",
-                                                              "Standardizált incidencia alakulása időben",
-                                                              "Megyénkénti nyers incidenciák",
-                                                              "Megyénkénti standardizált incidenciák" ) ),
+                        selectInput( "Feladat", "Feladat",
+                                     c( "Kor- és/vagy nemspecifikus incidencia",
+                                        "Kor- és/vagy nemspecifikus incidencia alakulása időben",
+                                        "Nyers incidencia alakulása időben",
+                                        "Standardizált incidencia alakulása időben",
+                                        "Megyénkénti nyers incidenciák",
+                                        "Megyénkénti standardizált incidenciák" ) ),
                         uiOutput( "SubtaskUI" ),
                         uiOutput( "StratificationUI" ),
                         uiOutput( "StandardUI" ),
@@ -135,9 +140,9 @@ ui <- fluidPage(
     )
   ),
   
-  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.12" ),
+  h4( "Írta: Ferenci Tamás (Óbudai Egyetem, Élettani Szabályozások Kutatóközpont), v2.21" ),
   
-  tags$script( HTML( "var sc_project=11601191; 
+  tags$script(HTML("var sc_project=11601191; 
                      var sc_invisible=1; 
                      var sc_security=\"5a06c22d\";
                      var scJsHost = ((\"https:\" == document.location.protocol) ?
@@ -145,7 +150,7 @@ ui <- fluidPage(
                      document.write(\"<sc\"+\"ript type='text/javascript' src='\" +
                      scJsHost+
                      \"statcounter.com/counter/counter.js'></\"+\"script>\");" ),
-               type = "text/javascript" )
+              type = "text/javascript")
   
 )
 
@@ -285,7 +290,7 @@ server <- function( input, output, session ) {
           pars <- list( formula = as.formula( PlotFormula ), ylab = "Incidencia [/év/100 ezer fő]", xlab = "Év",
                         data = merge( StdPops,
                                       RawData[ ICDCode==dg&County%in%megye, .( N = sum( N ), Population = sum( Population ) ),
-                                                c( "Age", "Sex", byvars ) ], by = c( "Age", "Sex" ) )[
+                                               c( "Age", "Sex", byvars ) ], by = c( "Age", "Sex" ) )[
                                                  , with( as.list( epitools::ageadjust.direct(
                                                    N, Population, stdpop = eval( parse( text = input$Standard ) ) )*1e5 ),
                                                    list( Inc = adj.rate, IncCIlwr = lci, IncCIupr = uci ) ), byvars ],
@@ -407,7 +412,7 @@ server <- function( input, output, session ) {
   output$AbraLetoltesPDF <- downloadHandler(
     filename = "RakregiszterVizualizatorPlot.pdf",
     content = function( file ) {
-      cairo_pdf( file, width = 9, height = 8 )
+      cairo_pdf( file, width = 16, height = 9 )
       print( plotInput() )
       dev.off( )
     } )
@@ -436,7 +441,7 @@ server <- function( input, output, session ) {
     selectInput( "Standard", "Standard", c( "Segi-Doll, 1960" = "StdSegiDoll1960",
                                             "ESP, 2013" = "StdESP2013",
                                             "WHO, 2001" = "StdWHO2001",
-                                            "Magyar, 2001-2015" = "StdHUN" ) ) else NULL )
+                                            "Magyar, 2000-2018" = "StdHUN" ) ) else NULL )
   
   output$CIout <- renderUI( if( !input$Feladat%in%MapTask )
     checkboxInput( "CI", "Konfidenciaintervallum" ) else NULL )
